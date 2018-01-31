@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>hello</title>
+    </head>
+    <body>
+        <h1>Hello, {{request.session.first_name}}!</h1>
+        <a href="/logout">Logout</a>
+
+        <p>Here are you appointments for today: {% now "M D Y"%}</p>
+
+        <table>
+					<tr>
+						<th>Tasks</th>
+						<th>Time</th>
+						<th>Status</th>
+						<th>Action</th>
+					</tr>
+					{% for todays_app in todays_apps %}
+					<tr>
+						<td>{{todays_app.name}}</td>
+						<td>{{todays_app.time}}</td>
+						<td>{{todays_app.status}}</td>
+						{% if todays_app.status == "pending" %}
+						<td><a href="/appointments/{{todays_app.id}}">Edit</a> | <a href="/delete_app/{{todays_app.id}}">Delete</a></td>
+						{% else %}
+						<td></td>
+						{% endif %}
+					</tr>
+					{% endfor %}
+				</table>
+
+
+                <table class="table">
+					<tr>
+						<th>Tasks</th>
+						<th>Date</th>
+						<th>Time</th>
+					</tr>
+					{% for other_apps in other_apps %}
+					<tr>
+						<td>{{other_apps.name}}</td>
+						<td>{{other_apps.date}}</td>
+						<td>{{other_apps.time}}</td>
+					</tr>
+					{% endfor %}
+				</table>
+
+        {% if messages %}
+			{% for message in messages %}
+				<p>{{message.message}}</p>
+			{% endfor %}
+		{% endif %}
+		<h3>Add Appointment:</h3>
+		<form action="/add_appointment" method="post">
+			{% csrf_token %}
+			<p>Date: <input type="date" name="date"></p>
+			<p>Time: <input type="time" name="time"></p>
+			<p>Tasks: <input type="text" name="name"></p>
+			<p><input type="submit" value="Add"></p>
+		</form>
+    </body>
+</html>
